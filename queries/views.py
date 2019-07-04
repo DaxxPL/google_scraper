@@ -1,19 +1,22 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse
 from django import views
 from .models import Query
 from .forms import SearchForm
+from.tasks import process_data
+from django.core.exceptions import ObjectDoesNotExist
 
 
-class QueryView(views.generic.CreateView):
-    model = Query
-    fields = ('text', )
+class SearchView(views.View):
+
+    def get(self, request, pk):
+        try:
+            item = Query.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return render(request, 'queries/query_wrong.html', {'pk': pk})
+        return render(request, 'queries/query_detail.html', {'object': item})
 
 
-class SearchView(views.generic.DetailView):
-    model = Query
-
-
-class MyView(views.View):
+class QueryView(views.View):
 
     form_class = SearchForm
 
@@ -34,8 +37,10 @@ class MyView(views.View):
         form = self.form_class(request.POST)
         query = form.data['query']
         timeout = form.data['timeout']
-        q = Query()
-        q.text = query
-        q.client_ip = self.get_client_ip(request)
-        q.save()
-        return redirect(q.get_absolute_url())
+        client_ip = self.get_client_ip(request)
+        try:
+            timeout = float(timeout)
+        except ValueError:
+            timeout = 0
+        process_data.s(query, client_ip).apply_async(soft_time_limit=timeout)
+        return redirect(f'/search/{query}')

@@ -11,4 +11,4 @@ class QueryForm(forms.ModelForm):
 
 class SearchForm(forms.Form):
     query = forms.CharField()
-    timeout = forms.FloatField(min_value=0.0)
+    timeout = forms.FloatField(min_value=0.0, required=False)
