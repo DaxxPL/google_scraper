@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django import views
 from .models import Query
 from .forms import SearchForm
-from.tasks import process_data
+from .tasks import process_data
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -17,7 +17,6 @@ class SearchView(views.View):
 
 
 class QueryView(views.View):
-
     form_class = SearchForm
 
     @staticmethod

@@ -55,7 +55,7 @@ def process_data(search_term, client_ip):
         num_results = processed_data[0]
         popular_words = count_words(processed_data)
         q, created = Query.objects.get_or_create(text=search_term, popular_words=popular_words,
-                                        num_results=num_results, client_ip=client_ip)
+                                                 num_results=num_results, client_ip=client_ip)
         if not created:
             Link.objects.filter(qu=q).all().delete()
         bulk = [Link(qu=q, title=item['title'], link=item['link'],
@@ -63,4 +63,3 @@ def process_data(search_term, client_ip):
         Link.objects.bulk_create(bulk)
     except SoftTimeLimitExceeded:
         raise SoftTimeLimitExceeded('Timeout limit!')
-
