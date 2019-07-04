@@ -1,0 +1,25 @@
+<h1>{{ object.text }}</h1>
+<h2>{{ object.created }}</h2>
+
+<table>
+    <tr>
+        <th>Position</th>
+        <th>Link</th>
+    </tr>
+    {% for item in object.link_set.all %}
+    <tr>
+        <td>{{ item.position }}</td>
+        <td>{{ item.link }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h1>Most popular words: </h1>
+<h3>{{ object.popular_words }}</h3>
+
+<h1>Num of results: </h1>
+<h3>{{ object.num_results }}</h3>
+
+<h1>Client IP:</h1>
+<h3>{{ object.client_ip }}</h3>

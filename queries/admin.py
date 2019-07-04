@@ -1,3 +1,14 @@
 from django.contrib import admin
+from .models import Query, Link
 
-# Register your models here.
+
+class QueryAdmin(admin.ModelAdmin):
+    pass
+
+
+class LinkAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(Link, LinkAdmin)
+admin.site.register(Query, QueryAdmin)
