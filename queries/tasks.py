@@ -6,6 +6,9 @@ import re
 from bs4 import BeautifulSoup
 from collections import Counter
 from .models import Query, Link
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+
 
 
 def count_words(processed_data):
@@ -21,8 +24,9 @@ def count_words(processed_data):
 @celery.task(name="give_results")
 def process_data(search_term, client_ip):
     try:
-        driver = webdriver.Firefox()
-        driver.get(f'https://www.google.com/search?q={search_term}&num=15')
+        driver = webdriver.Remote(command_executor='http://172.18.0.2:4444/wd/hub',
+                                  desired_capabilities=DesiredCapabilities.CHROME)
+        driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
         soup = BeautifulSoup(driver.page_source, "html5lib")
         driver.close()
         num = soup.select('#resultStats')[0].getText()

@@ -5,7 +5,6 @@ from .forms import SearchForm
 from .tasks import process_data
 from django.core.exceptions import ObjectDoesNotExist
 
-
 class SearchView(views.View):
 
     def get(self, request, pk):

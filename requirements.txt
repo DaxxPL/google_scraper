@@ -1,4 +1,6 @@
-django==2.2.2
-celery==4.3.0
+django==2.2.3
+celery==4.2.1
 selenium==3.141.0
 BeautifulSoup4==4.7.1
+pyvirtualdisplay==0.2.4
+html5lib==1.0.1

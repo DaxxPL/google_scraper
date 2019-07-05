@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qwg^5*16#h4ty*(hk^qs^@njm-sgyk!ts3y8-wc8ui!$bx5icq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '57201021.ngrok.io', ]
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', '57201021.ngrok.io', 'localhost']
 
 
 # Application definition
@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'queries',
-    'django_celery_results',
 
 ]
 
@@ -122,6 +121,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-CELERY_BROKER_URL = 'redis://localhost'
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_BROKER_URL = 'amqp://admin:mypass@rabbit:5672'
+
