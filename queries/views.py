@@ -34,13 +34,18 @@ class QueryView(views.View):
 
     def post(self, request):
         form = self.form_class(request.POST)
-        query = form.data['query']
-        timeout = form.data['timeout']
-        browser = form.data['browser']
-        client_ip = self.get_client_ip(request)
-        try:
-            timeout = float(timeout)
-        except ValueError:
-            timeout = 0
-        process_data.s(query, client_ip, browser).apply_async(soft_time_limit=timeout)
-        return redirect(f'/search/{query}')
+        if form.is_valid():
+            query = form.data['query']
+            timeout = form.data['timeout']
+            browser = form.data['browser']
+            proxy = form.cleaned_data['proxy']
+            try:
+                timeout = float(timeout)
+            except ValueError:
+                timeout = 0
+            client_ip = self.get_client_ip(request)
+
+            process_data.s(query, client_ip, browser, proxy).apply_async(soft_time_limit=timeout)
+            return redirect(f'/search/{query}')
+        else:
+            return render(request, 'queries/query_form.html', {'form': form})

@@ -14,3 +14,5 @@ class SearchForm(forms.Form):
     query = forms.CharField()
     timeout = forms.FloatField(min_value=0.0, required=False)
     browser = forms.ChoiceField(choices=(('Chrome', 'Chrome'), ('Firefox', 'Firefox')))
+    proxy = forms.GenericIPAddressField(required=False)
+

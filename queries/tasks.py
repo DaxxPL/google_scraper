@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from collections import Counter
 from .models import Query, Link
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.proxy import Proxy, ProxyType
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 def count_words(processed_data):
@@ -20,15 +22,33 @@ def count_words(processed_data):
 
 
 @celery.task(name="give_results")
-def process_data(search_term, client_ip, browser):
+def process_data(search_term, client_ip, browser, proxy):
     try:
+        if proxy != '':
+            prox = Proxy()
+            prox.proxy_type = ProxyType.MANUAL
+            prox.http_proxy = proxy
+            prox.socks_proxy = proxy
+            prox.ssl_proxy = proxy
         if browser == 'Chrome':
+            capabilities = DesiredCapabilities.CHROME
+            try:
+                prox.add_to_capabilities(capabilities)
+            except NameError:
+                pass
             driver = webdriver.Remote(command_executor='http://selenium-chrome:4444/wd/hub',
-                                      desired_capabilities=DesiredCapabilities.CHROME)
+                                      desired_capabilities=capabilities)
         elif browser == 'Firefox':
+            capabilities = DesiredCapabilities.FIREFOX
+            try:
+                prox.add_to_capabilities(capabilities)
+            except NameError:
+                pass
             driver = webdriver.Remote(command_executor='http://selenium-firefox:4444/wd/hub',
-                                      desired_capabilities=DesiredCapabilities.FIREFOX)
+                                      desired_capabilities=capabilities)
         driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
+        element = WebDriverWait(driver, 10).until(
+            lambda x: x.find_element_by_id("resultStats"))
         soup = BeautifulSoup(driver.page_source, "html5lib")
         driver.close()
         num = soup.select('#resultStats')[0].getText()
