@@ -32,6 +32,7 @@ services:
       - db
       - rabbit
   selenium:
+    hostname: selenium
     image: selenium/standalone-chrome-debug:3.7.1
     ports:
       - 4444:4444

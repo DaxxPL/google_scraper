@@ -24,7 +24,7 @@ def count_words(processed_data):
 @celery.task(name="give_results")
 def process_data(search_term, client_ip):
     try:
-        driver = webdriver.Remote(command_executor='http://172.18.0.2:4444/wd/hub',
+        driver = webdriver.Remote(command_executor='http://selenium:4444/wd/hub',
                                   desired_capabilities=DesiredCapabilities.CHROME)
         driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
         soup = BeautifulSoup(driver.page_source, "html5lib")
@@ -66,4 +66,5 @@ def process_data(search_term, client_ip):
                      description=item['text'], position=item['rank']) for item in processed_data[1:]]
         Link.objects.bulk_create(bulk)
     except SoftTimeLimitExceeded:
+        driver.close()
         raise SoftTimeLimitExceeded('Timeout limit!')
