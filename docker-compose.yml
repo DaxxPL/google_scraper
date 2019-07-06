@@ -31,12 +31,19 @@ services:
     depends_on:
       - db
       - rabbit
-  selenium:
-    hostname: selenium
+  selenium-chrome:
+    hostname: selenium-chrome
     image: selenium/standalone-chrome-debug:3.7.1
     ports:
       - 4444:4444
       - 5900:5900
+  selenium-firefox:
+    hostname: selenium-firefox
+    image: selenium/standalone-firefox-debug:3.7.1
+    ports:
+      - 4445:4444
+      - 5901:5900
+
 
 volumes:
   postgres_data:

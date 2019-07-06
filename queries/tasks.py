@@ -9,8 +9,6 @@ from .models import Query, Link
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
-
-
 def count_words(processed_data):
     my_list = [data['text'].strip() + ' ' + data['title'].strip() for data in processed_data[1:]]
     my_list = [re.sub(r'[^\w\s]', '', s) for s in my_list]
@@ -22,10 +20,14 @@ def count_words(processed_data):
 
 
 @celery.task(name="give_results")
-def process_data(search_term, client_ip):
+def process_data(search_term, client_ip, browser):
     try:
-        driver = webdriver.Remote(command_executor='http://selenium:4444/wd/hub',
-                                  desired_capabilities=DesiredCapabilities.CHROME)
+        if browser == 'Chrome':
+            driver = webdriver.Remote(command_executor='http://selenium-chrome:4444/wd/hub',
+                                      desired_capabilities=DesiredCapabilities.CHROME)
+        elif browser == 'Firefox':
+            driver = webdriver.Remote(command_executor='http://selenium-firefox:4444/wd/hub',
+                                      desired_capabilities=DesiredCapabilities.FIREFOX)
         driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
         soup = BeautifulSoup(driver.page_source, "html5lib")
         driver.close()

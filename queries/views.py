@@ -5,6 +5,7 @@ from .forms import SearchForm
 from .tasks import process_data
 from django.core.exceptions import ObjectDoesNotExist
 
+
 class SearchView(views.View):
 
     def get(self, request, pk):
@@ -35,10 +36,11 @@ class QueryView(views.View):
         form = self.form_class(request.POST)
         query = form.data['query']
         timeout = form.data['timeout']
+        browser = form.data['browser']
         client_ip = self.get_client_ip(request)
         try:
             timeout = float(timeout)
         except ValueError:
             timeout = 0
-        process_data.s(query, client_ip).apply_async(soft_time_limit=timeout)
+        process_data.s(query, client_ip, browser).apply_async(soft_time_limit=timeout)
         return redirect(f'/search/{query}')
