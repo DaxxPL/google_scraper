@@ -9,6 +9,9 @@ from .models import Query, Link
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.support.wait import WebDriverWait
+import time
+from celery import states
+
 
 
 def count_words(processed_data):
@@ -23,6 +26,7 @@ def count_words(processed_data):
 
 @celery.task()
 def process_data(search_term, client_ip, browser, proxy):
+    celery.current_task.update_state(state=states.STARTED, meta={'progress': 'downloading data...'})
     try:
         if proxy != '':
             prox = Proxy()
@@ -51,6 +55,7 @@ def process_data(search_term, client_ip, browser, proxy):
             lambda x: x.find_element_by_id("resultStats"))
         soup = BeautifulSoup(driver.page_source, "html5lib")
         driver.close()
+        time.sleep(30)
         num = soup.select('#resultStats')[0].getText()
         num = num.replace('\xa0', '')
         num = int(re.findall(r'\s\d+', num)[0])

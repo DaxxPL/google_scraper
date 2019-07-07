@@ -1,6 +1,13 @@
 version: '3'
 
 services:
+  db:
+    image: postgres:10.1-alpine
+    ports:
+      - "54320:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
   rabbit:
       hostname: rabbit
       image: rabbitmq:latest
@@ -17,7 +24,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - rabbit
+      - db
   worker:
     build: .
     command: celery -A google_scraper worker -l info
@@ -37,3 +44,5 @@ services:
     ports:
       - 4445:4444
       - 5901:5900
+volumes:
+  postgres_data:

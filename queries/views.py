@@ -4,17 +4,32 @@ from .models import Query
 from .forms import SearchForm
 from .tasks import process_data
 from django.core.exceptions import ObjectDoesNotExist
-
+from django_celery_results.models import TaskResult
+from celery.task.control import inspect
 
 class SearchView(views.View):
 
     def get(self, request, pk):
         try:
             item = Query.objects.get(pk=pk)
+            return render(request, 'queries/query_detail.html', {'object': item})
         except ObjectDoesNotExist:
-            return render(request, 'queries/query_wrong.html', {'pk': pk})
-        return render(request, 'queries/query_detail.html', {'object': item})
+            i = inspect()
+            active = i.active()
+            for item in active[list(active)[0]]:
+                if item['args'].startswith(f"('{pk}'"):
+                    return render(request, 'queries/query_progress.html', {'object': item})
 
+        '''   
+            task_result = TaskResult.objects.filter(task_args__startswith=f"('{pk}'").order_by('-date_done')[0]
+            if task_result.status == 'SUCCESS':
+
+
+            else:
+                
+        except IndexError:
+            return render(request, 'queries/query_wrong.html', {'pk': pk})
+        '''
 
 class QueryView(views.View):
     form_class = SearchForm

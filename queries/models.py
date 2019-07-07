@@ -4,7 +4,7 @@ from django.db import models
 class Query(models.Model):
     text = models.TextField(primary_key=True)
     popular_words = models.TextField(null=False)
-    num_results = models.PositiveIntegerField(null=False)
+    num_results = models.BigIntegerField(null=False)
     client_ip = models.TextField()
 
     def get_absolute_url(self):

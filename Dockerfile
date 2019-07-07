@@ -5,6 +5,7 @@ FROM python:3.7
 # The enviroment variable ensures that the python output is set straight
 # to the terminal with out buffering it first
 ENV PYTHONUNBUFFERED 1
+ENV DJANGO_SETTINGS_MODULE=google_scraper.settings
 
 # create root directory for our project in the container
 RUN mkdir /gog
@@ -14,9 +15,11 @@ WORKDIR /gog
 
 # Copy the current directory contents into the container at /music_service
 ADD . /gog/
-
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
+
+
+
 
 
 
