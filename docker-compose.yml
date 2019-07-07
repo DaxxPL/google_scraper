@@ -1,10 +1,6 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:9.6.5
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
   rabbit:
       hostname: rabbit
       image: rabbitmq:latest
@@ -15,21 +11,19 @@ services:
           - "5672:5672"
   web:
     build: .
-    command: bash -c "python /code/manage.py migrate --noinput && python /code/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/code
+      - .:/gog
     ports:
       - "8000:8000"
     depends_on:
-      - db
       - rabbit
   worker:
     build: .
     command: celery -A google_scraper worker -l info
     volumes:
-      - .:/code
+      - .:/gog
     depends_on:
-      - db
       - rabbit
   selenium-chrome:
     hostname: selenium-chrome
@@ -43,7 +37,3 @@ services:
     ports:
       - 4445:4444
       - 5901:5900
-
-
-volumes:
-  postgres_data:

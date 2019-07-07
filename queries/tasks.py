@@ -21,7 +21,7 @@ def count_words(processed_data):
     return [i[0] for i in count.most_common(10)]
 
 
-@celery.task(name="give_results")
+@celery.task()
 def process_data(search_term, client_ip, browser, proxy):
     try:
         if proxy != '':

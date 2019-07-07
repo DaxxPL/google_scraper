@@ -44,7 +44,6 @@ class QueryView(views.View):
             except ValueError:
                 timeout = 0
             client_ip = self.get_client_ip(request)
-
             process_data.s(query, client_ip, browser, proxy).apply_async(soft_time_limit=timeout)
             return redirect(f'/search/{query}')
         else:

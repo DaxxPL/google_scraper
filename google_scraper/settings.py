@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'queries',
+    'django_celery_results',
 
 ]
 
@@ -122,4 +123,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 CELERY_BROKER_URL = 'amqp://admin:mypass@rabbit:5672'
+CELERY_RESULT_BACKEND = 'django-db'
+
+
 
