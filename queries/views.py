@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect, HttpResponse
-from django import views
-from .models import Query
-from .forms import SearchForm
-from .tasks import process_data
-from django.core.exceptions import ObjectDoesNotExist
-from django_celery_results.models import TaskResult
 from celery.task.control import inspect
+from django import views
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import render, redirect
+from django_celery_results.models import TaskResult
+
+from .forms import SearchForm
+from .models import Query
+from .tasks import process_data
+
 
 class SearchView(views.View):
 

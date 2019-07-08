@@ -1,8 +1,8 @@
-psycopg2
-django-celery-results
-django==2.2.3
-gunicorn
-celery==4.3.0
-selenium==3.141.0
 BeautifulSoup4==4.7.1
+celery==4.3.0
+django-celery-results==1.1.2
+django==2.2.3
+gunicorn==19.9.0
 html5lib==1.0.1
+psycopg2==2.8.3
+selenium==3.141.0

@@ -17,5 +17,3 @@ class Link(models.Model):
     link = models.URLField()
     description = models.TextField()
     position = models.PositiveIntegerField()
-
-

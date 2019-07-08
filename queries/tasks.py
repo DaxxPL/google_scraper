@@ -1,17 +1,19 @@
 from __future__ import absolute_import, unicode_literals
+
+import re
+import time
+from collections import Counter
+
 import celery
+from bs4 import BeautifulSoup
+from celery import states
 from celery.exceptions import SoftTimeLimitExceeded
 from selenium import webdriver
-import re
-from bs4 import BeautifulSoup
-from collections import Counter
-from .models import Query, Link
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.support.wait import WebDriverWait
-import time
-from celery import states
 
+from .models import Query, Link
 
 
 def count_words(processed_data):
@@ -51,8 +53,7 @@ def process_data(search_term, client_ip, browser, proxy):
             driver = webdriver.Remote(command_executor='http://selenium-firefox:4444/wd/hub',
                                       desired_capabilities=capabilities)
         driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
-        element = WebDriverWait(driver, 10).until(
-            lambda x: x.find_element_by_id("resultStats"))
+        WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id("resultStats"))
         soup = BeautifulSoup(driver.page_source, "html5lib")
         driver.close()
         time.sleep(30)
