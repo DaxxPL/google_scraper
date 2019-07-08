@@ -101,3 +101,4 @@ def process_data(search_term, client_ip, browser, proxy):
     except SoftTimeLimitExceeded:
         driver.close()
         raise SoftTimeLimitExceeded('Timeout limit!')
+    return "Success!"
