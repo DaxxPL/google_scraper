@@ -17,9 +17,3 @@ WORKDIR /gog
 ADD . /gog/
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
-
-
-
-
-
-

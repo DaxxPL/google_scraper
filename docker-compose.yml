@@ -18,7 +18,7 @@ services:
           - "5672:5672"
   web:
     build: .
-    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh ./web_init.sh
     volumes:
       - .:/gog
     ports:
