@@ -29,7 +29,7 @@ services:
       - DJANGO_SECRET_KEY=h8z#!iqe5976#l%)xk_f#$r37+hg!*oz-!t2ipk!(#nzx45*z
   worker:
     build: .
-    command: celery -A google_scraper worker -l info
+    command: python manage.py celery
     volumes:
       - .:/gog
     depends_on:

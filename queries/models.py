@@ -6,6 +6,7 @@ class Query(models.Model):
     popular_words = models.TextField(null=False)
     num_results = models.BigIntegerField(null=False)
     client_ip = models.TextField()
+    browser = models.TextField()
 
     def get_absolute_url(self):
         return f"/search/{self.text}"

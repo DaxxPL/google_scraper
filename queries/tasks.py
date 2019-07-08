@@ -26,7 +26,12 @@ def count_words(processed_data):
 
 
 def get_from_google(driver, search_term):
-    pass
+    driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
+    WebDriverWait(driver, 3).until(lambda x: x.find_element_by_id("resultStats"))
+    source = driver.page_source
+    driver.close()
+    return source
+
 
 @celery.task()
 def process_data(search_term, client_ip, browser, proxy):
@@ -44,8 +49,7 @@ def process_data(search_term, client_ip, browser, proxy):
                 prox.add_to_capabilities(capabilities)
             except NameError:
                 pass
-            host='selenium-chrome'
-
+            host = 'selenium-chrome'
         elif browser == 'Firefox':
             capabilities = DesiredCapabilities.FIREFOX
             try:
@@ -55,10 +59,8 @@ def process_data(search_term, client_ip, browser, proxy):
             host = 'selenium-firefox'
         driver = webdriver.Remote(command_executor=f'http://{host}:4444/wd/hub',
                                   desired_capabilities=capabilities)
-        driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
-        WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id("resultStats"))
-        soup = BeautifulSoup(driver.page_source, "html5lib")
-        driver.close()
+        page_source = get_from_google(driver, search_term)
+        soup = BeautifulSoup(page_source, "html5lib")
         num = soup.select('#resultStats')[0].getText()
         num = num.replace('\xa0', '')
         num = int(re.findall(r'\s\d+', num)[0])
@@ -88,8 +90,9 @@ def process_data(search_term, client_ip, browser, proxy):
             rank += 1
         num_results = processed_data[0]
         popular_words = count_words(processed_data)
-        q, created = Query.objects.get_or_create(text=search_term, popular_words=popular_words,
-                                                 num_results=num_results, client_ip=client_ip)
+        q, created = Query.objects.update_or_create(text=search_term, defaults=dict(
+                                                    popular_words=popular_words, num_results=num_results,
+                                                    client_ip=client_ip, browser=browser))
         if not created:
             Link.objects.filter(qu=q).all().delete()
         bulk = [Link(qu=q, title=item['title'], link=item['link'],

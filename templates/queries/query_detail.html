@@ -4,7 +4,7 @@
         <th>Position</th>
         <th>Link</th>
     </tr>
-    {% for item in object.link_set.all reversed %}
+    {% for item in object.link_set.all %}
     <tr>
         <td>{{ item.position }}</td>
         <td>{{ item.link }}</td>
@@ -21,3 +21,29 @@
 
 <h1>Client IP:</h1>
 <h3>{{ object.client_ip }}</h3>
+
+<h1>Browser type:</h1>
+<h3>{{ object.browser }}</h3>
+
+<h1>Last Task result:</h1>
+<table>
+    <tr>
+        <th>task id:</th>
+        <th>status:</th>
+        <th>result:</th>
+        <th>date of execution:</th>
+        <th>traceback:</th>
+        <th>task args:</th>
+    </tr>
+    <tr>
+        <td>{{ task_result.task_id }}</td>
+        <td>{{ task_result.status }}</td>
+        <td>{{ task_result.result }}</td>
+        <td>{{ task_result.date_done }}</td>
+        <td>{{ task_result.traceback }}</td>
+        <td>{{ task_result.task_args }}</td>
+
+    </tr>
+
+
+</table>

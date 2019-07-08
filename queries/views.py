@@ -20,7 +20,9 @@ class SearchView(views.View):
                 return render(request, 'queries/query_progress.html', {'object': item})
         try:
             item = Query.objects.get(pk=pk)
-            return render(request, 'queries/query_detail.html', {'object': item})
+            task_result = TaskResult.objects.filter(task_args__startswith=f"('{pk}'").order_by('-date_done')[0]
+
+            return render(request, 'queries/query_detail.html', {'object': item, 'task_result': task_result})
         except ObjectDoesNotExist:
             try:
                 task_result = TaskResult.objects.filter(task_args__startswith=f"('{pk}'").order_by('-date_done')[0]
