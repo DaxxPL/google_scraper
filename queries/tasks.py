@@ -25,6 +25,9 @@ def count_words(processed_data):
     return [i[0] for i in count.most_common(10)]
 
 
+def get_from_google(driver, search_term):
+    pass
+
 @celery.task()
 def process_data(search_term, client_ip, browser, proxy):
     celery.current_task.update_state(state=states.STARTED, meta={'progress': 'downloading data...'})
@@ -41,16 +44,17 @@ def process_data(search_term, client_ip, browser, proxy):
                 prox.add_to_capabilities(capabilities)
             except NameError:
                 pass
-            driver = webdriver.Remote(command_executor='http://selenium-chrome:4444/wd/hub',
-                                      desired_capabilities=capabilities)
+            host='selenium-chrome'
+
         elif browser == 'Firefox':
             capabilities = DesiredCapabilities.FIREFOX
             try:
                 prox.add_to_capabilities(capabilities)
             except NameError:
                 pass
-            driver = webdriver.Remote(command_executor='http://selenium-firefox:4444/wd/hub',
-                                      desired_capabilities=capabilities)
+            host = 'selenium-firefox'
+        driver = webdriver.Remote(command_executor=f'http://{host}:4444/wd/hub',
+                                  desired_capabilities=capabilities)
         driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
         WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id("resultStats"))
         soup = BeautifulSoup(driver.page_source, "html5lib")

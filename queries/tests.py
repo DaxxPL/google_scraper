@@ -39,3 +39,24 @@ class SearchViewFormTest(WebTest):
         form['timeout'] = 'bar'
         response = form.submit()
         self.assertContains(response, "Enter a number.")
+
+    def test_sending_filled_form_but_string_proxy(self):
+        form = self.app.get(reverse('find')).form
+        form['query'] = 'foo'
+        form['proxy'] = 'bar'
+        response = form.submit()
+        self.assertContains(response, "Enter a valid IPv4 or IPv6 address.")
+
+    def test_sending_filled_form_but_int_proxy(self):
+        form = self.app.get(reverse('find')).form
+        form['query'] = 'foo'
+        form['proxy'] = 5412
+        response = form.submit()
+        self.assertContains(response, "Enter a valid IPv4 or IPv6 address.")
+
+    def test_sending_filled_form_but_wrong_proxy(self):
+        form = self.app.get(reverse('find')).form
+        form['query'] = 'foo'
+        form['proxy'] = '125,6.453,234'
+        response = form.submit()
+        self.assertContains(response, "Enter a valid IPv4 or IPv6 address.")

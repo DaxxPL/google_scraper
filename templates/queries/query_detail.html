@@ -1,12 +1,10 @@
 <h1>{{ object.text }}</h1>
-<h2>{{ object.created }}</h2>
-
 <table>
     <tr>
         <th>Position</th>
         <th>Link</th>
     </tr>
-    {% for item in object.link_set.all %}
+    {% for item in object.link_set.all reversed %}
     <tr>
         <td>{{ item.position }}</td>
         <td>{{ item.link }}</td>
