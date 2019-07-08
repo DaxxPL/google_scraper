@@ -19,17 +19,12 @@ class SearchView(views.View):
             for item in active[list(active)[0]]:
                 if item['args'].startswith(f"('{pk}'"):
                     return render(request, 'queries/query_progress.html', {'object': item})
+            try:
+                task_result = TaskResult.objects.filter(task_args__startswith=f"('{pk}'").order_by('-date_done')[0]
+                return render(request, 'queries/query_failed.html', {'object': task_result})
+            except IndexError:
+                return render(request, 'queries/query_wrong.html', {'pk': pk})
 
-        '''   
-            task_result = TaskResult.objects.filter(task_args__startswith=f"('{pk}'").order_by('-date_done')[0]
-            if task_result.status == 'SUCCESS':
-
-
-            else:
-                
-        except IndexError:
-            return render(request, 'queries/query_wrong.html', {'pk': pk})
-        '''
 
 class QueryView(views.View):
     form_class = SearchForm
