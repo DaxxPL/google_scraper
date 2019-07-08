@@ -12,15 +12,16 @@ from .tasks import process_data
 class SearchView(views.View):
 
     def get(self, request, pk):
+        pk = pk.lower()
+        i = inspect()
+        active = i.active()
+        for item in active[list(active)[0]]:
+            if item['args'].startswith(f"('{pk}'"):
+                return render(request, 'queries/query_progress.html', {'object': item})
         try:
             item = Query.objects.get(pk=pk)
             return render(request, 'queries/query_detail.html', {'object': item})
         except ObjectDoesNotExist:
-            i = inspect()
-            active = i.active()
-            for item in active[list(active)[0]]:
-                if item['args'].startswith(f"('{pk}'"):
-                    return render(request, 'queries/query_progress.html', {'object': item})
             try:
                 task_result = TaskResult.objects.filter(task_args__startswith=f"('{pk}'").order_by('-date_done')[0]
                 return render(request, 'queries/query_failed.html', {'object': task_result})
@@ -47,7 +48,7 @@ class QueryView(views.View):
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            query = form.data['query']
+            query = form.data['query'].lower()
             timeout = form.data['timeout']
             browser = form.data['browser']
             proxy = form.cleaned_data['proxy']

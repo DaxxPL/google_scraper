@@ -34,6 +34,8 @@ services:
       - .:/gog
     depends_on:
       - rabbit
+    environment:
+      - DJANGO_SECRET_KEY=h8z#!iqe5976#l%)xk_f#$r37+hg!*oz-!t2ipk!(#nzx45*z
   selenium-chrome:
     hostname: selenium-chrome
     image: selenium/standalone-chrome-debug:3.7.1
