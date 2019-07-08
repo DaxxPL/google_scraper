@@ -1,7 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import re
-import time
 from collections import Counter
 
 import celery
@@ -56,7 +55,6 @@ def process_data(search_term, client_ip, browser, proxy):
         WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id("resultStats"))
         soup = BeautifulSoup(driver.page_source, "html5lib")
         driver.close()
-        time.sleep(30)
         num = soup.select('#resultStats')[0].getText()
         num = num.replace('\xa0', '')
         num = int(re.findall(r'\s\d+', num)[0])
