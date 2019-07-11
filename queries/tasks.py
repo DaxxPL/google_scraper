@@ -11,7 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.support.wait import WebDriverWait
-
+import os
 from .models import Query, Link
 
 
@@ -25,8 +25,11 @@ def count_words(processed_data):
     return [i[0] for i in count.most_common(10)]
 
 
-def get_from_google(driver, search_term):
-    driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
+def get_from_google(driver, search_term, test):
+    if test == 'aa':
+        driver.get(search_term)
+    else:
+        driver.get(f'https://www.google.pl/search?q={search_term}&num=15')
     WebDriverWait(driver, 3).until(lambda x: x.find_element_by_id("resultStats"))
     source = driver.page_source
     driver.close()
@@ -34,7 +37,7 @@ def get_from_google(driver, search_term):
 
 
 @celery.task()
-def process_data(search_term, client_ip, browser, proxy):
+def process_data(search_term, client_ip, browser, proxy, test):
     celery.current_task.update_state(state=states.STARTED, meta={'progress': 'downloading data...'})
     try:
         if proxy != '':
@@ -59,7 +62,7 @@ def process_data(search_term, client_ip, browser, proxy):
             host = 'selenium-firefox'
         driver = webdriver.Remote(command_executor=f'http://{host}:4444/wd/hub',
                                   desired_capabilities=capabilities)
-        page_source = get_from_google(driver, search_term)
+        page_source = get_from_google(driver, search_term, test)
         soup = BeautifulSoup(page_source, "html5lib")
         num = soup.select('#resultStats')[0].getText()
         num = num.replace('\xa0', '')

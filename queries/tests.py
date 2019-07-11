@@ -1,6 +1,12 @@
 from django.test import TestCase
 from django.urls import reverse
 from django_webtest import WebTest
+from pytest_localserver.http import WSGIServer
+import pytest
+from urllib.parse import urlparse
+import os
+import requests
+
 
 
 class SearchViewTest(TestCase):
@@ -60,3 +66,13 @@ class SearchViewFormTest(WebTest):
         form['proxy'] = '125,6.453,234'
         response = form.submit()
         self.assertContains(response, "Enter a valid IPv4 or IPv6 address.")
+
+    def test_sending_vaild_form(self):
+        import time
+        form = self.app.get(reverse('find')).form
+        form['query'] = 'foo'
+        response = form.submit()
+        print(response.url)
+        time.sleep(7)
+        print(requests.get('http://0.0.0.0:8000/search/foo').text)
+

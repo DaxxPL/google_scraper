@@ -25,6 +25,10 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - rabbit
+      - worker
+      - selenium-chrome
+      - selenium-firefox
     environment:
       - DJANGO_SECRET_KEY=h8z#!iqe5976#l%)xk_f#$r37+hg!*oz-!t2ipk!(#nzx45*z
   worker:

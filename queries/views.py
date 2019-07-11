@@ -34,8 +34,7 @@ class SearchView(views.View):
 class QueryView(views.View):
     form_class = SearchForm
 
-    @staticmethod
-    def get_client_ip(request):
+    def get_client_ip(self, request):
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
             ip = x_forwarded_for.split(',')[0]
@@ -49,6 +48,7 @@ class QueryView(views.View):
 
     def post(self, request):
         form = self.form_class(request.POST)
+        test = request.GET.get('qwert', '0')
         if form.is_valid():
             query = form.data['query'].lower()
             timeout = form.data['timeout']
@@ -59,7 +59,7 @@ class QueryView(views.View):
             except ValueError:
                 timeout = 0
             client_ip = self.get_client_ip(request)
-            process_data.s(query, client_ip, browser, proxy).apply_async(soft_time_limit=timeout)
+            process_data.s(query, client_ip, browser, proxy, test).apply_async(soft_time_limit=timeout)
             return redirect(f'/search/{query}')
         else:
             return render(request, 'queries/query_form.html', {'form': form})
