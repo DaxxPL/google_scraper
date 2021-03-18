@@ -1,7 +1,7 @@
 BeautifulSoup4==4.7.1
 celery==4.3.0
 django-celery-results==1.1.2
-django==2.2.3
+django==2.2.18
 django_webtest==1.9.7
 gunicorn==19.9.0
 html5lib==1.0.1
